@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canal Cofre — Denúncias de vazamento de dados</title>
+<meta name="description" content="Canal seguro e confidencial para relatar vazamentos de dados, falhas de segurança e atividades suspeitas. Protótipo visual em conformidade com a LGPD.">
+<meta name="referrer" content="no-referrer">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f6f5;--surface:#fff;--ink:#12302c;--muted:#52665f;--line:#cfdad6;--brand:#0f5c52;--brand-ink:#fff;--alert:#b45309;--alert-bg:#fdf1de;--ok:#146c43;--ok-bg:#e1f3ea;--focus:#1d4ed8;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a18;--surface:#14262310;--surface:#152421;--ink:#e6f0ed;--muted:#9bb2ab;--line:#2a403b;--brand:#4fc3ad;--brand-ink:#06201b;--alert:#f2b35c;--alert-bg:#33260f;--ok:#6fd6a0;--ok-bg:#12301f;--focus:#8ab4ff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1a18;--surface:#152421;--ink:#e6f0ed;--muted:#9bb2ab;--line:#2a403b;--brand:#4fc3ad;--brand-ink:#06201b;--alert:#f2b35c;--alert-bg:#33260f;--ok:#6fd6a0;--ok-bg:#12301f;--focus:#8ab4ff;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 "Source Sans 3",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;line-height:1.15;margin:0 0 .5em;letter-spacing:-.01em}
+h1{font-size:clamp(2rem,5vw,3.25rem)}h2{font-size:1.65rem}h3{font-size:1.1rem}
+p{margin:0 0 1em;max-width:68ch}
+a{color:var(--brand)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 1.25rem}
+.skip{position:absolute;left:-999px}.skip:focus{left:1rem;top:1rem;background:var(--surface);padding:.5rem 1rem;z-index:9}
+header.top{border-bottom:1px solid var(--line);background:var(--surface)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:.9rem;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:.6rem;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.2rem}
+.logo svg{width:28px;height:28px}
+nav a{margin-left:1.1rem;text-decoration:none;color:var(--ink);font-weight:600}
+nav a:hover{text-decoration:underline}
+.btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--brand);color:var(--brand-ink);border:0;border-radius:8px;padding:.8rem 1.4rem;font:600 1rem "Source Sans 3",sans-serif;cursor:pointer;text-decoration:none}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.hero{padding:3.5rem 0 2.5rem}
+.hero .wrap{display:grid;grid-template-columns:1.35fr 1fr;gap:2.5rem;align-items:start}
+.hero p.lead{font-size:1.2rem;color:var(--muted)}
+.promise{background:var(--surface);border:1.5px solid var(--brand);border-radius:12px;padding:1.4rem}
+.promise ul{list-style:none;margin:0;padding:0}
+.promise li{display:flex;gap:.7rem;padding:.65rem 0;border-top:1px solid var(--line)}
+.promise li:first-child{border-top:0}
+.promise svg{flex:none;width:22px;height:22px;color:var(--brand);margin-top:3px}
+.promise b{display:block}.promise span{color:var(--muted);font-size:.95rem}
+section{padding:2.5rem 0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1.75rem}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;border:0;padding:0;margin:0 0 1.5rem}
+.types legend{font-weight:600;margin-bottom:.5rem;padding:0}
+.type input{position:absolute;opacity:0}
+.type label{display:block;height:100%;border:1.5px solid var(--line);border-radius:10px;padding:1rem;cursor:pointer;background:var(--bg)}
+.type label b{display:block;margin-bottom:.2rem}
+.type label span{font-size:.93rem;color:var(--muted)}
+.type input:checked+label{border-color:var(--brand);box-shadow:inset 0 0 0 1.5px var(--brand);background:var(--surface)}
+.type input:focus-visible+label{outline:3px solid var(--focus);outline-offset:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.field{margin-bottom:1.1rem}
+label.l,.field>span.l{display:block;font-weight:600;margin-bottom:.3rem}
+.hint{font-size:.9rem;color:var(--muted);margin:.25rem 0 0}
+input[type=text],input[type=date],input[type=email],select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:.65rem .8rem}
+textarea{min-height:140px;resize:vertical}
+.checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.4rem .8rem}
+.checks label,.row label{display:flex;gap:.5rem;align-items:flex-start;font-weight:400}
+input[type=checkbox],input[type=radio]{accent-color:var(--brand);width:1.1rem;height:1.1rem;margin-top:.25rem;flex:none}
+.anon{display:flex;gap:.9rem;align-items:flex-start;background:var(--ok-bg);border-radius:10px;padding:1rem;margin-bottom:1.1rem}
+.anon svg{flex:none;width:24px;height:24px;color:var(--ok)}
+.contact{display:none}.contact.on{display:block}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:1.2rem;text-align:center;color:var(--muted);background:var(--bg)}
+.warn{display:flex;gap:.6rem;background:var(--alert-bg);color:var(--ink);border-left:4px solid var(--alert);border-radius:6px;padding:.8rem 1rem;font-size:.95rem;margin:.8rem 0 1.1rem}
+.consent{border-top:1px solid var(--line);padding-top:1.1rem;margin-top:.5rem}
+.err{color:#b91c1c;font-size:.92rem;display:none;margin-top:.3rem}
+@media (prefers-color-scheme:dark){.err{color:#fca5a5}}
+.invalid .err{display:block}
+.receipt{display:none;border:2px solid var(--ok);border-radius:12px;padding:1.75rem;background:var(--surface)}
+.receipt.on{display:block}
+.code{font:700 1.5rem ui-monospace,Menlo,Consolas,monospace;background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:.6rem 1rem;display:inline-block;margin:.2rem .6rem .6rem 0;word-break:break-all}
+.timeline{list-style:none;margin:1rem 0 0;padding:0;border-left:3px solid var(--line)}
+.timeline li{padding:0 0 1rem 1.2rem;position:relative}
+.timeline li::before{content:"";position:absolute;left:-9px;top:6px;width:15px;height:15px;border-radius:50%;background:var(--line)}
+.timeline li.done::before{background:var(--ok)}.timeline li.now::before{background:var(--alert)}
+.timeline small{color:var(--muted);display:block}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1.2rem}
+.card .art{display:inline-block;font-size:.85rem;font-weight:600;color:var(--brand);margin-bottom:.4rem}
+.card p{font-size:.97rem;color:var(--muted);margin:0}
+.rights{columns:2;column-gap:2rem;padding-left:1.2rem}
+.rights li{margin-bottom:.4rem;break-inside:avoid}
+footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-size:.93rem;background:var(--surface)}
+.demo{background:var(--alert-bg);border-bottom:1px solid var(--alert);padding:.55rem 0;font-size:.93rem;text-align:center}
+@media(max-width:820px){.hero .wrap,.grid2,.cards,.types{grid-template-columns:1fr}.rights{columns:1}nav{display:none}}
+@media(prefers-reduced-motion:no-preference){.receipt.on{animation:pop .35s ease-out}@keyframes pop{from{transform:scale(.98);opacity:0}}}
+</style>
+</head>
+<body>
+<a class="skip" href="#denunciar">Ir para o formulário</a>
+<div class="demo" role="note">Protótipo visual: nenhum dado é enviado, armazenado ou processado. Tudo acontece apenas no seu navegador.</div>
+
+<header class="top"><div class="wrap">
+  <div class="logo"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true" style="color:var(--brand)"><path d="M16 3l11 4v8c0 7-4.5 12-11 14C9.500 27 5 22 5 15V7z"/><rect x="11.500" y="14" width="9" height="7" rx="1.500"/><path d="M13 14v-2.500a3 3 0 016 0V14"/></svg>Canal Cofre</div>
+  <nav aria-label="Principal"><a href="#denunciar">Fazer denúncia</a><a href="#acompanhar">Acompanhar</a><a href="#lgpd">Privacidade e LGPD</a></nav>
+  <button class="btn ghost" id="theme" type="button" aria-label="Alternar tema claro/escuro">Tema</button>
+</div></header>
+
+<main id="topo">
+<div class="hero"><div class="wrap">
+  <div>
+    <h1>Viu um vazamento ou uma falha de segurança? Conte com proteção.</h1>
+    <p class="lead">Colaboradores, parceiros e terceiros podem relatar incidentes, práticas inadequadas e atividades suspeitas. Você escolhe se quer se identificar. Ninguém é punido por denunciar de boa-fé.</p>
+    <p><a class="btn" href="#denunciar">Fazer uma denúncia</a> <a class="btn ghost" href="#acompanhar">Acompanhar protocolo</a></p>
+  </div>
+  <aside class="promise" aria-label="Nossas garantias">
+    <h2 style="font-size:1.2rem">O que garantimos a você</h2>
+    <ul>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/><path d="M3 3l18 18"/></svg><div><b>Anonimato opcional</b><span>Não pedimos nome, e-mail ou telefone, e não registramos seu IP.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg><div><b>Criptografia ponta a ponta</b><span>Relato cifrado antes de sair do seu dispositivo, aberto só pela equipe de apuração.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M9 12h6M9 16h6"/></svg><div><b>Acesso restrito e auditado</b><span>Cada leitura do seu relato fica registrada.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>Prazos claros</b><span>Confirmação em até 7 dias e resposta em até 90.</span></div></li>
+    </ul>
+  </aside>
+</div></div>
+
+<section id="denunciar"><div class="wrap">
+  <h2>Fazer uma denúncia</h2>
+  <p>Leva cerca de 5 minutos. Descreva fatos e evite incluir dados pessoais de terceiros, como CPF ou senhas. Se precisar citar um dado, descreva o tipo sem copiá-lo.</p>
+  <form class="panel" id="form" novalidate>
+    <fieldset class="types"><legend>O que você quer relatar?</legend>
+      <div class="type"><input type="radio" name="tipo" id="t1" value="Incidente de vazamento" checked><label for="t1"><b>Vazamento de dados</b><span>Dados expostos, perdidos ou acessados sem autorização.</span></label></div>
+      <div class="type"><input type="radio" name="tipo" id="t2" value="Prática inadequada"><label for="t2"><b>Prática inadequada</b><span>Senhas compartilhadas, dados em local inseguro, descumprimento de política.</span></label></div>
+      <div class="type"><input type="radio" name="tipo" id="t3" value="Atividade suspeita"><label for="t3"><b>Atividade suspeita</b><span>Acessos estranhos, phishing, comportamento incomum de sistemas ou pessoas.</span></label></div>
+    </fieldset>
+
+    <div class="grid2">
+      <div class="field"><label class="l" for="vinculo">Seu vínculo com a empresa</label>
+        <select id="vinculo"><option>Colaborador(a)</option><option>Parceiro(a)</option><option>Fornecedor ou terceiro</option><option>Cliente ou titular de dados</option><option>Prefiro não informar</option></select></div>
+      <div class="field"><label class="l" for="area">Área ou sistema envolvido</label>
+        <input type="text" id="area" placeholder="Ex.: CRM, RH, servidor de arquivos"></div>
+      <div class="field"><label class="l" for="quando">Quando aconteceu (aproximado)</label>
+        <input type="date" id="quando"><p class="hint">Se não souber, deixe em branco.</p></div>
+      <div class="field"><label class="l" for="grav">Quão grave parece?</label>
+        <select id="grav"><option>Baixa: sem exposição confirmada</option><option selected>Média: possível exposição</option><option>Alta: exposição confirmada</option><option>Crítica: em andamento agora</option></select></div>
+    </div>
+
+    <div class="field"><span class="l" id="dl">Quais tipos de dado podem estar envolvidos?</span>
+      <div class="checks" role="group" aria-labelledby="dl">
+        <label><input type="checkbox">Dados cadastrais (nome, CPF, e-mail)</label>
+        <label><input type="checkbox">Dados financeiros</label>
+        <label><input type="checkbox">Dados de saúde</label>
+        <label><input type="checkbox">Dados de crianças e adolescentes</label>
+        <label><input type="checkbox">Credenciais e senhas</label>
+        <label><input type="checkbox">Segredos comerciais</label>
+        <label><input type="checkbox">Biometria</label>
+        <label><input type="checkbox">Não sei informar</label>
+      </div>
+      <p class="hint">Dados de saúde, biometria e de crianças são sensíveis e recebem tratamento prioritário.</p></div>
+
+    <div class="field" id="fdesc"><label class="l" for="desc">O que aconteceu?</label>
+      <textarea id="desc" required aria-describedby="derr" placeholder="Conte o que viu, onde, quem pode ter acesso e o que já foi feito. Não cole dados pessoais aqui."></textarea>
+      <p class="err" id="derr">Descreva o que aconteceu com pelo menos 30 caracteres.</p></div>
+
+    <div class="field"><span class="l">Evidências (opcional)</span>
+      <div class="drop">Arraste arquivos ou <u>escolha do computador</u><br><small>Demonstração: nenhum arquivo é enviado</small></div>
+      <div class="warn"><span aria-hidden="true">⚠️</span><span>Antes de anexar, remova metadados (autor, localização, histórico) e oculte dados pessoais desnecessários. Anexe só o mínimo para apurar.</span></div></div>
+
+    <div class="anon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.500 8-8 9-4.500-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      <div><label class="row" style="font-weight:600"><input type="checkbox" id="idn"> Quero me identificar para receber retorno direto</label>
+      <p class="hint" style="margin:.3rem 0 0">Deixe desmarcado para permanecer anônimo. Você acompanha tudo pelo protocolo e pela chave de acesso.</p></div></div>
+    <div class="contact" id="contact"><div class="field"><label class="l" for="mail">E-mail para contato</label><input type="email" id="mail" autocomplete="email" placeholder="nome@exemplo.com"><p class="hint">Usado apenas para falar sobre esta denúncia e apagado ao fim da apuração.</p></div></div>
+
+    <div class="consent field" id="fc">
+      <label class="row"><input type="checkbox" id="ok" required aria-describedby="cerr"><span>Li o <a href="#lgpd">aviso de privacidade</a> e entendo que as informações serão usadas apenas para apurar esta denúncia.</span></label>
+      <p class="err" id="cerr">Confirme a leitura do aviso para continuar.</p></div>
+    <button class="btn" type="submit">Enviar denúncia com segurança</button>
+  </form>
+
+  <div class="receipt" id="receipt" role="status" tabindex="-1">
+    <h2>Denúncia registrada (simulação)</h2>
+    <p>Guarde os dois códigos abaixo. Sem eles não é possível acompanhar o caso, e não conseguimos recuperá-los, porque não temos seus dados de contato.</p>
+    <div><small>Protocolo</small><br><span class="code" id="proto"></span></div>
+    <div><small>Chave de acesso</small><br><span class="code" id="chave"></span></div>
+    <p><button class="btn ghost" type="button" id="copy">Copiar códigos</button> <button class="btn" type="button" id="novo">Fazer outra denúncia</button></p>
+  </div>
+</div></section>
+
+<section id="acompanhar"><div class="wrap">
+  <h2>Acompanhar uma denúncia</h2>
+  <p>Informe o protocolo e a chave de acesso. Na demonstração, qualquer valor mostra um exemplo de andamento.</p>
+  <div class="panel">
+    <div class="grid2"><div class="field"><label class="l" for="p2">Protocolo</label><input type="text" id="p2" placeholder="CC-2026-XXXXXX" autocomplete="off"></div>
+    <div class="field"><label class="l" for="k2">Chave de acesso</label><input type="text" id="k2" placeholder="XXXX-XXXX-XXXX" autocomplete="off"></div></div>
+    <button class="btn" type="button" id="consulta">Consultar andamento</button>
+    <div id="status" hidden>
+      <ol class="timeline" aria-label="Andamento">
+        <li class="done"><b>Recebida</b><small>Relato cifrado e protocolado</small></li>
+        <li class="done"><b>Triagem concluída</b><small>Classificada por gravidade e tipo de dado</small></li>
+        <li class="now"><b>Em apuração</b><small>Equipe de segurança e encarregado (DPO) analisando</small></li>
+        <li><b>Medidas e comunicação</b><small>Se houver risco relevante, comunicação à ANPD e aos titulares (art. 48)</small></li>
+        <li><b>Encerrada</b><small>Você recebe um retorno e os dados da denúncia seguem o prazo de retenção</small></li>
+      </ol>
+      <div class="warn"><span aria-hidden="true">💬</span><span>Mensagem da equipe (exemplo): “Obrigado pelo relato. Precisamos saber se o arquivo estava em uma pasta compartilhada com terceiros. Responda por aqui, sem se identificar.”</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="lgpd"><div class="wrap">
+  <h2>Como este canal protege seus dados</h2>
+  <p>Este sistema trata dados sensíveis, então aplica a LGPD (Lei 13.709/2018) a si mesmo. Estes são os princípios do projeto.</p>
+  <div class="cards">
+    <div class="card"><span class="art">Art. 6º, I e II</span><h3>Finalidade e adequação</h3><p>Os dados servem só para apurar a denúncia. Nunca para marketing, avaliação de desempenho ou outro uso.</p></div>
+    <div class="card"><span class="art">Art. 6º, III</span><h3>Minimização</h3><p>Só pedimos o necessário. Nome, e-mail e IP não são obrigatórios nem coletados por padrão.</p></div>
+    <div class="card"><span class="art">Art. 46</span><h3>Segurança</h3><p>Criptografia em trânsito e em repouso, controle de acesso por função e autenticação em duas etapas.</p></div>
+    <div class="card"><span class="art">Art. 37</span><h3>Registro e auditoria</h3><p>Todo acesso aos relatos é registrado, com trilha imutável e revisão periódica.</p></div>
+    <div class="card"><span class="art">Art. 15 e 16</span><h3>Retenção limitada</h3><p>Dados excluídos ou anonimizados ao fim da apuração, respeitados prazos legais (ex.: 5 anos para fins de defesa).</p></div>
+    <div class="card"><span class="art">Art. 41</span><h3>Encarregado (DPO)</h3><p>Pessoa indicada para atender titulares e a ANPD: <u>dpo@suaempresa.com.br</u> (exemplo).</p></div>
+  </div>
+  <div class="panel" style="margin-top:1.2rem">
+    <h3>Base legal e seus direitos</h3>
+    <p>Base legal prevista: cumprimento de obrigação legal ou regulatória e legítimo interesse (art. 7º, II e IX), conforme análise da empresa. Se você citar dados de outras pessoas, elas também são titulares e têm direitos. Para cada denunciado, o acesso é equilibrado com a proteção da identidade de quem denuncia.</p>
+    <p><b>Direitos do titular (art. 18):</b></p>
+    <ul class="rights"><li>Confirmação de que há tratamento</li><li>Acesso aos dados</li><li>Correção de dados incorretos</li><li>Anonimização, bloqueio ou eliminação</li><li>Informação sobre compartilhamento</li><li>Revogação do consentimento, quando aplicável</li><li>Reclamação à ANPD</li></ul>
+    <p>O que fazemos se o vazamento for confirmado: avaliamos o risco, contemos o incidente e, havendo risco ou dano relevante, comunicamos a ANPD e os titulares em prazo razoável (art. 48).</p>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p><b>Canal Cofre</b>: protótipo de interface. Os textos jurídicos são ilustrativos e devem ser revisados pelo jurídico e pelo encarregado da sua empresa antes de uso real.</p>
+  <p>Em caso de risco imediato (ataque em andamento), acione também o time de segurança da sua organização.</p>
+</div></footer>
+
+<script>
+const $=s=>document.querySelector(s);
+// Tema
+$('#theme').onclick=()=>{const d=document.documentElement,dark=getComputedStyle(d).colorScheme==='dark';d.dataset.theme=dark?'light':'dark'};
+// Identificação opcional
+$('#idn').onchange=e=>$('#contact').classList.toggle('on',e.target.checked);
+// Gerador de códigos (simulado, no navegador)
+const abc='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const rnd=n=>Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>abc[b%abc.length]).join('');
+let codes='';
+$('#form').onsubmit=e=>{
+  e.preventDefault();
+  const dOk=$('#desc').value.trim().length>=30,cOk=$('#ok').checked;
+  $('#fdesc').classList.toggle('invalid',!dOk);$('#fc').classList.toggle('invalid',!cOk);
+  if(!dOk){$('#desc').focus();return}
+  if(!cOk){$('#ok').focus();return}
+  const p='CC-2026-'+rnd(6),k=rnd(4)+'-'+rnd(4)+'-'+rnd(4);
+  $('#proto').textContent=p;$('#chave').textContent=k;codes='Protocolo: '+p+'\nChave: '+k;
+  $('#form').hidden=true;const r=$('#receipt');r.classList.add('on');r.focus();r.scrollIntoView({behavior:'smooth',block:'center'});
+};
+$('#copy').onclick=async e=>{try{await navigator.clipboard.writeText(codes);e.target.textContent='Copiado'}catch(_){e.target.textContent='Copie manualmente'}};
+$('#novo').onclick=()=>{$('#form').reset();$('#contact').classList.remove('on');$('#form').hidden=false;$('#receipt').classList.remove('on');$('#denunciar').scrollIntoView()};
+$('#consulta').onclick=()=>{$('#status').hidden=false};
+</script>
+</body>
+</html>
