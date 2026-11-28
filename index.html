@@ -54,7 +54,7 @@ section{padding:2.5rem 0}
 .field{margin-bottom:1.1rem}
 label.l,.field>span.l{display:block;font-weight:600;margin-bottom:.3rem}
 .hint{font-size:.9rem;color:var(--muted);margin:.25rem 0 0}
-input[type=text],input[type=date],input[type=email],select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:.65rem .8rem}
+input[type=text],input[type=date],input[type=email],input[type=password],select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:.65rem .8rem}
 textarea{min-height:140px;resize:vertical}
 .checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.4rem .8rem}
 .checks label,.row label{display:flex;gap:.5rem;align-items:flex-start;font-weight:400}
@@ -86,15 +86,19 @@ footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-s
 .demo{background:var(--alert-bg);border-bottom:1px solid var(--alert);padding:.55rem 0;font-size:.93rem;text-align:center}
 @media(max-width:820px){.hero .wrap,.grid2,.cards,.types{grid-template-columns:1fr}.rights{columns:1}nav{display:none}}
 @media(prefers-reduced-motion:no-preference){.receipt.on{animation:pop .35s ease-out}@keyframes pop{from{transform:scale(.98);opacity:0}}}
+table{width:100%;border-collapse:collapse;font-size:.95rem}th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line)}
+.tag{display:inline-block;padding:.1rem .6rem;border-radius:99px;background:var(--bg);border:1px solid var(--line);font-size:.85rem}
+.scroll{overflow-x:auto}.pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.8rem;margin-bottom:1rem}
+hr{border:0;border-top:1px solid var(--line);margin:1.5rem 0}
 </style>
 </head>
 <body>
 <a class="skip" href="#denunciar">Ir para o formulário</a>
-<div class="demo" role="note">Protótipo visual: nenhum dado é enviado, armazenado ou processado. Tudo acontece apenas no seu navegador.</div>
+<div class="demo" role="note">Protótipo funcional: não há servidor. Os relatos são cifrados (AES-GCM) e guardados apenas no armazenamento deste navegador.</div>
 
 <header class="top"><div class="wrap">
   <div class="logo"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true" style="color:var(--brand)"><path d="M16 3l11 4v8c0 7-4.5 12-11 14C9.500 27 5 22 5 15V7z"/><rect x="11.500" y="14" width="9" height="7" rx="1.500"/><path d="M13 14v-2.500a3 3 0 016 0V14"/></svg>Canal Cofre</div>
-  <nav aria-label="Principal"><a href="#denunciar">Fazer denúncia</a><a href="#acompanhar">Acompanhar</a><a href="#lgpd">Privacidade e LGPD</a></nav>
+  <nav aria-label="Principal"><a href="#denunciar">Fazer denúncia</a><a href="#acompanhar">Acompanhar</a><a href="#painel">Painel interno</a><a href="#lgpd">Privacidade e LGPD</a></nav>
   <button class="btn ghost" id="theme" type="button" aria-label="Alternar tema claro/escuro">Tema</button>
 </div></header>
 
@@ -171,7 +175,7 @@ footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-s
 
   <div class="receipt" id="receipt" role="status" tabindex="-1">
     <h2>Denúncia registrada (simulação)</h2>
-    <p>Guarde os dois códigos abaixo. Sem eles não é possível acompanhar o caso, e não conseguimos recuperá-los, porque não temos seus dados de contato.</p>
+    <p>Seu relato foi cifrado antes de ser gravado. Guarde os dois códigos abaixo: sem eles não é possível acompanhar o caso, e não conseguimos recuperá-los, porque guardamos apenas o hash da chave.</p>
     <div><small>Protocolo</small><br><span class="code" id="proto"></span></div>
     <div><small>Chave de acesso</small><br><span class="code" id="chave"></span></div>
     <p><button class="btn ghost" type="button" id="copy">Copiar códigos</button> <button class="btn" type="button" id="novo">Fazer outra denúncia</button></p>
@@ -180,20 +184,31 @@ footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-s
 
 <section id="acompanhar"><div class="wrap">
   <h2>Acompanhar uma denúncia</h2>
-  <p>Informe o protocolo e a chave de acesso. Na demonstração, qualquer valor mostra um exemplo de andamento.</p>
+  <p>Informe o protocolo e a chave de acesso recebidos ao enviar a denúncia.</p>
   <div class="panel">
     <div class="grid2"><div class="field"><label class="l" for="p2">Protocolo</label><input type="text" id="p2" placeholder="CC-2026-XXXXXX" autocomplete="off"></div>
     <div class="field"><label class="l" for="k2">Chave de acesso</label><input type="text" id="k2" placeholder="XXXX-XXXX-XXXX" autocomplete="off"></div></div>
     <button class="btn" type="button" id="consulta">Consultar andamento</button>
-    <div id="status" hidden>
-      <ol class="timeline" aria-label="Andamento">
-        <li class="done"><b>Recebida</b><small>Relato cifrado e protocolado</small></li>
-        <li class="done"><b>Triagem concluída</b><small>Classificada por gravidade e tipo de dado</small></li>
-        <li class="now"><b>Em apuração</b><small>Equipe de segurança e encarregado (DPO) analisando</small></li>
-        <li><b>Medidas e comunicação</b><small>Se houver risco relevante, comunicação à ANPD e aos titulares (art. 48)</small></li>
-        <li><b>Encerrada</b><small>Você recebe um retorno e os dados da denúncia seguem o prazo de retenção</small></li>
-      </ol>
-      <div class="warn"><span aria-hidden="true">💬</span><span>Mensagem da equipe (exemplo): “Obrigado pelo relato. Precisamos saber se o arquivo estava em uma pasta compartilhada com terceiros. Responda por aqui, sem se identificar.”</span></div>
+    <div id="status" hidden aria-live="polite"></div>
+  </div>
+</div></section>
+
+<section id="painel"><div class="wrap">
+  <h2>Painel interno (equipe de apuração)</h2>
+  <p>Cada perfil vê apenas o necessário. Todo acesso fica registrado em uma trilha de auditoria encadeada por hash.</p>
+  <div class="panel">
+    <div id="login">
+      <div class="grid2">
+        <div class="field"><label class="l" for="perfil">Perfil</label>
+          <select id="perfil"><option value="triagem">Comitê de integridade (triagem)</option><option value="seguranca">Equipe de segurança/TI</option><option value="dpo">Encarregado (DPO)</option><option value="juridico">Jurídico/Compliance</option><option value="admin">Administrador do sistema</option></select></div>
+        <div class="field"><label class="l" for="senha">Senha</label><input type="password" id="senha" autocomplete="off">
+          <p class="hint">Demonstração: a senha é <b>cofre123</b>. Em produção: SSO e autenticação em duas etapas.</p></div>
+      </div>
+      <button class="btn" id="entrar" type="button">Entrar</button> <span class="err" id="lerr" style="display:inline" role="alert"></span>
+    </div>
+    <div id="area" hidden>
+      <p><b id="quem"></b> <button class="btn ghost" id="sair" type="button">Sair</button></p>
+      <div class="scroll" id="lista"></div><div id="det"></div><div id="aud"></div>
     </div>
   </div>
 </div></section>
@@ -226,27 +241,102 @@ footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-s
 
 <script>
 const $=s=>document.querySelector(s);
-// Tema
 $('#theme').onclick=()=>{const d=document.documentElement,dark=getComputedStyle(d).colorScheme==='dark';d.dataset.theme=dark?'light':'dark'};
-// Identificação opcional
 $('#idn').onchange=e=>$('#contact').classList.toggle('on',e.target.checked);
-// Gerador de códigos (simulado, no navegador)
+
+// ===== "Banco de dados" e utilitários (simulados no navegador) =====
+const LS=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(_){return null}};
+const SV=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
+const DB={get r(){return LS('cc_reports')||[]},set r(v){SV('cc_reports',v)},get a(){return LS('cc_audit')||[]},set a(v){SV('cc_audit',v)}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+const te=new TextEncoder(),td=new TextDecoder();
+const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
+const ub=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const sha=async s=>b64(await crypto.subtle.digest('SHA-256',te.encode(s)));
 const abc='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const rnd=n=>Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>abc[b%abc.length]).join('');
+// Criptografia em repouso: AES-GCM 256 (a chave simula um cofre de chaves do servidor)
+async function kms(){let j=LS('cc_kms');if(!j){const k=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt','decrypt']);j=await crypto.subtle.exportKey('jwk',k);SV('cc_kms',j)}return crypto.subtle.importKey('jwk',j,'AES-GCM',false,['encrypt','decrypt'])}
+async function seal(o){const iv=crypto.getRandomValues(new Uint8Array(12));return{iv:b64(iv),c:b64(await crypto.subtle.encrypt({name:'AES-GCM',iv},await kms(),te.encode(JSON.stringify(o))))}}
+async function unseal(x){return JSON.parse(td.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub(x.iv)},await kms(),ub(x.c))))}
+// Trilha de auditoria encadeada por hash (qualquer alteração quebra a cadeia)
+const hh=e=>sha(JSON.stringify([e.t,e.u,e.acao,e.alvo,e.prev]));
+async function audit(u,acao,alvo){const a=DB.a,e={t:new Date().toISOString(),u,acao,alvo,prev:a.length?a[a.length-1].h:'0'};e.h=await hh(e);a.push(e);DB.a=a}
+async function verify(){let prev='0';for(const e of DB.a){if(e.prev!==prev||e.h!==await hh(e))return false;prev=e.h}return true}
+
+const ST=['Recebida','Triagem concluída','Em apuração','Medidas e comunicação','Encerrada'];
+const SD=['Relato cifrado e protocolado','Classificada por gravidade e tipo de dado','Equipe de segurança e encarregado (DPO) analisando','Se houver risco relevante, comunicação à ANPD e aos titulares (art. 48)','Retorno ao denunciante e retenção conforme prazo legal'];
+// Controle de acesso por perfil: ver = quais denúncias; set = status que pode aplicar
+const PERF={
+ triagem:{n:'Comitê de integridade (triagem)',ver:()=>true,set:[1,2]},
+ seguranca:{n:'Equipe de segurança/TI',ver:r=>r.st===2,set:[3]},
+ dpo:{n:'Encarregado (DPO)',ver:r=>r.pessoal,set:[3],aud:1},
+ juridico:{n:'Jurídico/Compliance',ver:r=>r.st>=3,set:[4]},
+ admin:{n:'Administrador do sistema',ver:()=>true,set:[],sem:1,aud:1}};
+
+// ===== Envio da denúncia =====
 let codes='';
-$('#form').onsubmit=e=>{
+$('#form').onsubmit=async e=>{
   e.preventDefault();
   const dOk=$('#desc').value.trim().length>=30,cOk=$('#ok').checked;
   $('#fdesc').classList.toggle('invalid',!dOk);$('#fc').classList.toggle('invalid',!cOk);
   if(!dOk){$('#desc').focus();return}
   if(!cOk){$('#ok').focus();return}
-  const p='CC-2026-'+rnd(6),k=rnd(4)+'-'+rnd(4)+'-'+rnd(4);
-  $('#proto').textContent=p;$('#chave').textContent=k;codes='Protocolo: '+p+'\nChave: '+k;
+  const dados=[...document.querySelectorAll('.checks input:checked')].map(i=>i.parentElement.textContent.trim());
+  const d={vinculo:$('#vinculo').value,area:$('#area').value.trim(),quando:$('#quando').value,dados,desc:$('#desc').value.trim(),contato:$('#idn').checked?$('#mail').value.trim():''};
+  const id='CC-2026-'+rnd(6),k=rnd(4)+'-'+rnd(4)+'-'+rnd(4),rs=DB.r;
+  rs.push({id,kh:await sha(k),st:0,tipo:document.querySelector('[name=tipo]:checked').value,grav:$('#grav').value.split(':')[0],pessoal:dados.some(x=>!/^(Segredos|Não sei)/.test(x)),criado:new Date().toISOString(),msgs:[],s:await seal(d)});
+  DB.r=rs;await audit('denunciante','denúncia registrada',id);
+  $('#proto').textContent=id;$('#chave').textContent=k;codes='Protocolo: '+id+'\nChave: '+k;
   $('#form').hidden=true;const r=$('#receipt');r.classList.add('on');r.focus();r.scrollIntoView({behavior:'smooth',block:'center'});
 };
 $('#copy').onclick=async e=>{try{await navigator.clipboard.writeText(codes);e.target.textContent='Copiado'}catch(_){e.target.textContent='Copie manualmente'}};
 $('#novo').onclick=()=>{$('#form').reset();$('#contact').classList.remove('on');$('#form').hidden=false;$('#receipt').classList.remove('on');$('#denunciar').scrollIntoView()};
-$('#consulta').onclick=()=>{$('#status').hidden=false};
+
+// ===== Acompanhamento (protocolo + chave; a chave é comparada pelo hash) =====
+$('#consulta').onclick=async()=>{
+  const box=$('#status'),p=$('#p2').value.trim().toUpperCase(),k=$('#k2').value.trim().toUpperCase();
+  box.hidden=false;
+  const r=DB.r.find(x=>x.id===p);
+  if(!r||r.kh!==await sha(k)){box.innerHTML='<div class="warn"><span aria-hidden="true">🔒</span><span>Protocolo ou chave inválidos. Neste protótipo os relatos ficam salvos apenas no navegador em que foram enviados.</span></div>';return}
+  await audit('denunciante','consultou andamento',p);
+  box.innerHTML='<ol class="timeline" aria-label="Andamento">'+ST.map((t,i)=>`<li class="${i<r.st||r.st===4?'done':i===r.st?'now':''}"><b>${t}</b><small>${SD[i]}</small></li>`).join('')+'</ol>'+r.msgs.map(m=>`<div class="warn"><span aria-hidden="true">💬</span><span><b>${esc(m.de)}:</b> ${esc(m.m)}</span></div>`).join('');
+};
+
+// ===== Painel interno =====
+let me=null;
+$('#entrar').onclick=async()=>{
+  const p=$('#perfil').value;
+  if($('#senha').value!=='cofre123'){await audit(p,'login falhou','-');$('#lerr').textContent='Senha incorreta.';return}
+  me=p;$('#lerr').textContent='';$('#senha').value='';await audit(p,'login','-');
+  $('#login').hidden=true;$('#area').hidden=false;$('#quem').textContent='Perfil: '+PERF[p].n;lista();
+};
+$('#sair').onclick=async()=>{await audit(me,'logout','-');me=null;$('#area').hidden=true;$('#login').hidden=false;$('#det').innerHTML='';$('#aud').innerHTML=''};
+function lista(){
+  const rs=DB.r.filter(PERF[me].ver);
+  $('#lista').innerHTML=rs.length?'<table><thead><tr><th>Protocolo</th><th>Tipo</th><th>Gravidade</th><th>Status</th><th></th></tr></thead><tbody>'+rs.map(r=>`<tr><td>${esc(r.id)}</td><td>${esc(r.tipo)}</td><td>${esc(r.grav)}</td><td><span class="tag">${ST[r.st]}</span></td><td><button class="btn ghost" data-id="${esc(r.id)}" type="button">Abrir</button></td></tr>`).join('')+'</tbody></table>':'<p>Nenhuma denúncia disponível para este perfil agora. Envie uma denúncia e avance o status pelo perfil de triagem.</p>';
+  aud();
+}
+$('#lista').onclick=e=>{if(e.target.dataset.id)abrir(e.target.dataset.id)};
+async function abrir(id){
+  const P=PERF[me],r=DB.r.find(x=>x.id===id);if(!r||!P.ver(r))return;
+  let d=null;
+  if(P.sem)await audit(me,'viu só metadados',id);else{d=await unseal(r.s);await audit(me,'leu o conteúdo',id)}
+  const ops=P.set.length?`<div class="grid2"><div class="field"><label class="l" for="nst">Alterar status</label><select id="nst"><option value="-1">Manter status</option>${P.set.map(i=>`<option value="${i}">${ST[i]}</option>`).join('')}</select></div><div class="field"><label class="l" for="msg">Mensagem ao denunciante (opcional)</label><textarea id="msg" style="min-height:70px"></textarea></div></div><button class="btn" id="aplicar" data-id="${esc(id)}" type="button">Salvar</button>`:'';
+  $('#det').innerHTML=`<hr><h3>${esc(id)} <span class="tag">${ST[r.st]}</span></h3>`+(d?`<p><b>Vínculo:</b> ${esc(d.vinculo)} · <b>Área:</b> ${esc(d.area||'-')} · <b>Quando:</b> ${esc(d.quando||'-')}</p><p><b>Dados envolvidos:</b> ${esc(d.dados.join(', ')||'-')}</p><div class="pre">${esc(d.desc)}</div><p><b>Contato:</b> ${esc(d.contato||'denunciante anônimo')}</p>`:'<div class="warn"><span>Conteúdo oculto: este perfil administra o sistema, mas não lê denúncias.</span></div>')+ops;
+}
+$('#det').onclick=async e=>{
+  if(e.target.id!=='aplicar')return;
+  const id=e.target.dataset.id,rs=DB.r,r=rs.find(x=>x.id===id),n=+$('#nst').value,m=$('#msg').value.trim();
+  if(n>=0&&PERF[me].set.includes(n)){r.st=n;await audit(me,'status → '+ST[n],id)}
+  if(m){r.msgs.push({de:PERF[me].n,m});await audit(me,'enviou mensagem',id)}
+  DB.r=rs;$('#det').innerHTML='<div class="warn"><span>Alterações salvas e registradas na auditoria.</span></div>';lista();
+};
+function aud(){
+  const el=$('#aud');if(!PERF[me].aud){el.innerHTML='';return}
+  el.innerHTML='<hr><h3>Trilha de auditoria</h3><p><button class="btn ghost" id="ver" type="button">Verificar integridade da cadeia</button> <b id="vr" role="status"></b></p><div class="scroll"><table><thead><tr><th>Data/hora</th><th>Quem</th><th>Ação</th><th>Alvo</th><th>Hash</th></tr></thead><tbody>'+DB.a.slice(-12).reverse().map(e=>`<tr><td>${esc(new Date(e.t).toLocaleString('pt-BR'))}</td><td>${esc(e.u)}</td><td>${esc(e.acao)}</td><td>${esc(e.alvo)}</td><td><code>${esc(e.h.slice(0,8))}</code></td></tr>`).join('')+'</tbody></table></div>';
+}
+$('#aud').onclick=async e=>{if(e.target.id==='ver')$('#vr').textContent=(await verify())?'✔ Cadeia íntegra':'✖ Adulteração detectada'};
 </script>
 </body>
 </html>
